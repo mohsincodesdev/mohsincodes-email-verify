@@ -1,14 +1,19 @@
 // api/verify.js
-const dns = require('dns').promises;
-
 export default async function handler(req, res) {
     const { email } = req.body;
-    const domain = email.split('@')[1];
-    
+    const apiKey = 'YOUR_ABSTRACT_API_KEY'; // Yahan apni key paste karein
+
     try {
-        const mx = await dns.resolveMx(domain);
-        res.status(200).json({ valid: mx && mx.length > 0 });
+        const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${email}`);
+        const data = await response.json();
+
+        // deliverability: 'DELIVERABLE' ka matlab hai email 100% sahi hai
+        if (data.deliverability === 'DELIVERABLE') {
+            res.status(200).json({ valid: true, message: "Email is valid and reachable." });
+        } else {
+            res.status(200).json({ valid: false, message: `Invalid: ${data.deliverability}` });
+        }
     } catch (e) {
-        res.status(200).json({ valid: false });
+        res.status(500).json({ valid: false, message: "Verification service error." });
     }
 }
