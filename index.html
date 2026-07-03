@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Validator</title>
+    <style>
+        body { background: #0b0e14; color: #fff; font-family: sans-serif; text-align: center; padding: 50px; }
+        input { padding: 10px; width: 300px; border-radius: 5px; border: none; }
+        button { padding: 10px 20px; background: #00d2ff; border: none; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Email Domain Validator</h1>
+    <input id="email" placeholder="Enter email to verify...">
+    <button onclick="check()">Verify</button>
+    <h2 id="res"></h2>
+
+    <script>
+        async function check() {
+            const email = document.getElementById('email').value;
+            document.getElementById('res').innerText = "Checking...";
+            
+            const response = await fetch('/api/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+            document.getElementById('res').innerText = data.valid ? "✅ Domain is valid (MX found)" : "❌ Invalid Domain";
+        }
+    </script>
+</body>
+</html>
