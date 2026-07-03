@@ -16,16 +16,20 @@
 
     <script>
         async function check() {
-            const email = document.getElementById('email').value;
-            document.getElementById('res').innerText = "Checking...";
-            
-            const response = await fetch('/api/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-            const data = await response.json();
-            document.getElementById('res').innerText = data.valid ? "✅ Domain is valid (MX found)" : "❌ Invalid Domain";
+    const email = document.getElementById('email').value;
+    const resEl = document.getElementById('res');
+    resEl.innerText = "Verifying with SMTP Ping...";
+
+    const response = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+    });
+    
+    const data = await response.json();
+    resEl.innerHTML = data.valid 
+        ? `<span style="color:green">✅ ${data.message}</span>` 
+        : `<span style="color:red">❌ ${data.message}</span>`;
         }
     </script>
 </body>
